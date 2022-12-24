@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js" integrity="sha256-wlnOm07jUmQpocWl3PtIevHHdkXAhimBiF4XDoFth6c=" crossorigin="anonymous"></script>
+
+    <title>元智大學學生會學權儀表板</title>
+</head>
+<body class="bg-gray-100">
+    <div class="h-screen"  id="app">
+        <div class="bg-white flex justify-center w-full p-4">
+            <img src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRgQl4LfaqBclXxx3Viri6DgwM-iY7EYOvrwpbzm95ykfT7RwnV5iUjwmc-dmY0eCilPtqOliOmzTg0/pubchart?oid=1633780512&format=image" alt="">
+        </div>
+        <!-- <ring-chart class="h-1/2 w-full"></ring-chart> -->
+        <div class="p-2 grid grid-cols-1 md:grid-cols-3">
+            <div class="" v-for="project in projects">
+                <card :name="project.名稱" :status="project.狀態" :description="project.進度"></card>
+            </div>
+        </div>
+        
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue3-sfc-loader/dist/vue3-sfc-loader.js"></script>
+    <script>
+
+        const options = {
+        moduleCache: {
+            vue: Vue
+        },
+        async getFile(url) {
+            
+            const res = await fetch(url);
+            if ( !res.ok )
+            throw Object.assign(new Error(res.statusText + ' ' + url), { res });
+            return {
+            getContentData: asBinary => asBinary ? res.arrayBuffer() : res.text(),
+            }
+        },
+        addStyle(textContent) {
+
+            const style = Object.assign(document.createElement('style'), { textContent });
+            const ref = document.head.getElementsByTagName('style')[0] || null;
+            document.head.insertBefore(style, ref);
+        },
+        }
+
+        const { loadModule } = window['vue3-sfc-loader'];
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    projects: []
+                }
+            },
+            methods: {
+                fetchData() {
+                    const id = '18i4ERupX1FHffrYmYlmYxOpiNGEkE0vCmtGcEtWyPPw';
+                    const gid = '0';
+                    const url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+                    fetch(url)
+                        .then( res => {
+                            if(!res.ok) throw new Error('Cannot fetch data!');
+                            return res.text();
+                        })
+                        .then( rawData => {
+                            let data = JSON.parse(rawData.match(/(?<="table":).*(?=}\);)/g)[0]);
+                            let table = []
+                            let row = []
+                            data.cols.forEach(colonne => row.push(colonne.label))
+                            table.push(row)
+                            data.rows.forEach(r => {
+                                let row = []
+                                r.c.forEach(cel => {
+                                    try{var value = cel.f ? cel.f : cel.v}
+                                    catch(e){var value = ''}
+                                    row.push(value)
+                                }
+                                )
+                                table.push(row)
+                                }
+                            )
+			                // create a Object using the first row as key
+                            for (let i = 2; i < table.length; i++) {	
+                                let obj = {}
+                                for (let j = 0; j < table[1].length; j++) {
+                                        obj[table[1][j]] = table[i][j]
+                                }
+								this.projects.push(obj)
+							}
+                        } )
+                }
+            },
+            components: {
+                'card': Vue.defineAsyncComponent( () => loadModule('./Card.vue', options) ),
+                'ring-chart': Vue.defineAsyncComponent( () => loadModule('./RingChart.vue', options) )
+            },
+            beforeMount() {
+                this.fetchData();
+            }
+        });
+
+        app.mount('#app');
+
+    </script>
+</body>
+</html>
