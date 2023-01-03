@@ -2,9 +2,9 @@
     <div class="container p-px mx-auto h-full">
         <div :class="statusObj" class="border-t-8 w-4/5 bg-white mx-auto mt-4 border-gray-100 shadow p-5 rounded-md">
             <div class="flex justify-center">
-                <img class="w-2/3" :src="imgStatus" alt="">
+                <img class="w-2/3 py-6" :src="imgStatus" alt="">
             </div>
-            <h2 class="font-medium text-2xl">{{name}}</h2>
+            <h2 class="font-medium text-2xl mb-2">{{name}}</h2>
             <div v-if="description">
                 <p>{{description}}</p>
             </div>
