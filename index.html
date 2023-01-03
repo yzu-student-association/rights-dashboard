@@ -66,7 +66,7 @@
                             return res.text();
                         })
                         .then( rawData => {
-                            let data = JSON.parse(rawData.match(/(?<="table":).*(?=}\);)/g)[0]);
+                            let data = JSON.parse(rawData.match(new RegExp('(?<="table":).*(?=}\);)','g'))[0]);
                             let table = []
                             let row = []
                             data.cols.forEach(colonne => row.push(colonne.label))
