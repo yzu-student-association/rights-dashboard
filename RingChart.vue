@@ -44,3 +44,19 @@ export default {
 }
 
 </script>
+
+/*
+
+B5B5B6
+
+FFF362
+
+E1893F
+
+6DA1C8
+
+73B284
+
+DD776A
+
+ */
