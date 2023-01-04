@@ -8,23 +8,30 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js" integrity="sha256-wlnOm07jUmQpocWl3PtIevHHdkXAhimBiF4XDoFth6c=" crossorigin="anonymous"></script>
 
     <title>元智大學學生會學權儀表板</title>
+    <meta name="description" content="元智大學學生會各項學生權利案辦理進度一覽" />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rights.yzusa.tw">
+    <meta property="og:title" content="元智大學學生會 - 學權儀表板" />
+    <meta property="og:description" content="元智大學學生會各項學生權利案辦理進度一覽"/>
+    <meta property="og:image" content="https://docs.google.com/spreadsheets/d/e/2PACX-1vRgQl4LfaqBclXxx3Viri6DgwM-iY7EYOvrwpbzm95ykfT7RwnV5iUjwmc-dmY0eCilPtqOliOmzTg0/pubchart?oid=1633780512&format=image"/>
+    <link rel="canonical" href="https://rights.yzusa.tw" />
 </head>
 <body class="bg-gray-100">
     
-    <div class="h-screen"  id="app">
-        <div class="sticky top-0 bg-white drop-shadow-md">
+    <div class="min-h-screen relative"  id="app">
+        <div class="sticky top-0 bg-white/75 drop-shadow-md backdrop-blur-md">
             <p class="p-2 pl-10 text-xl font-bold">元智大學學生會 學權儀表板</p>
         </div>
         <div class="bg-white flex justify-center w-full p-4">
             <img src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRgQl4LfaqBclXxx3Viri6DgwM-iY7EYOvrwpbzm95ykfT7RwnV5iUjwmc-dmY0eCilPtqOliOmzTg0/pubchart?oid=1633780512&format=image" alt="">
         </div>
         <!-- <ring-chart class="h-1/2 w-full"></ring-chart> -->
-        <div class="p-2 xl:px-64 grid grid-cols-1 md:grid-cols-3">
+        <div class="p-2 pb-16 xl:px-64 grid grid-cols-1 md:grid-cols-3">
             <div class="" v-for="project in projects">
                 <card :name="project.名稱" :status="project.狀態" :description="project.進度"></card>
             </div>
         </div>
-        <div class="bg-[#2b476c]">
+        <div class="bg-[#2b476c] absolute bottom-0 w-full">
             <p class="p-2 text-center text-white">©2023 Yuan Ze University Student Association</p>
         </div>
     </div>
