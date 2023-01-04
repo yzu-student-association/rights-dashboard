@@ -28,7 +28,7 @@
         <!-- <ring-chart class="h-1/2 w-full"></ring-chart> -->
         <div class="p-2 pb-16 xl:px-64 grid grid-cols-1 md:grid-cols-3">
             <div class="" v-for="project in projects">
-                <card :name="project.名稱" :status="project.狀態" :description="project.進度"></card>
+                <card :name="project.名稱" :status="project.狀態" :p-description="project.進度"></card>
             </div>
         </div>
         <div class="bg-[#2b476c] absolute bottom-0 w-full">

@@ -5,8 +5,10 @@
                 <img class="w-2/3 py-6" :src="imgStatus" alt="">
             </div>
             <h2 class="font-medium text-2xl mb-2">{{name}}</h2>
-            <div v-if="description">
-                <p>{{description}}</p>
+            <div v-if="pDescription">
+                <div v-for="description in descriptions">
+                    <p>{{description}}</p>
+                </div>
             </div>
             <div v-else>
                 <p>{{status}}</p>
@@ -27,7 +29,7 @@ const statusColor = {
 
 export default {
     name: 'card',
-    props: ['name','status','description'],
+    props: ['name','status','pDescription'],
     data: () => {
         return {
 
@@ -41,6 +43,9 @@ export default {
         },
         imgStatus() {
             return `/imgs/${this.status}.png`
+        },
+        descriptions() {
+            return this.pDescription.split('\n')
         }
     }
 }
