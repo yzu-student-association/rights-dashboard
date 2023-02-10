@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js" integrity="sha256-wlnOm07jUmQpocWl3PtIevHHdkXAhimBiF4XDoFth6c=" crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.1/echarts.min.js" integrity="sha512-OTbGFYPLe3jhy4bUwbB8nls0TFgz10kn0TLkmyA+l3FyivDs31zsXCjOis7YGDtE2Jsy0+fzW+3/OVoPVujPmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <title>元智大學學生會學權儀表板</title>
     <meta name="description" content="元智大學學生會各項學生權利案辦理進度一覽" />
     <meta property="og:type" content="website">
@@ -19,13 +18,13 @@
 <body class="bg-gray-100">
     
     <div class="min-h-screen relative"  id="app">
-        <div class="sticky top-0 bg-white/75 drop-shadow-md backdrop-blur-md">
+        <div class="z-10 sticky top-0 bg-white/75 drop-shadow-md backdrop-blur-md">
             <p class="p-2 pl-10 text-xl font-bold">元智大學學生會 學權儀表板</p>
         </div>
-        <div class="bg-white flex justify-center w-full p-4">
+        <!-- <div class="bg-white flex justify-center w-full p-4">
             <img src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRgQl4LfaqBclXxx3Viri6DgwM-iY7EYOvrwpbzm95ykfT7RwnV5iUjwmc-dmY0eCilPtqOliOmzTg0/pubchart?oid=1633780512&format=image" alt="">
-        </div>
-        <!-- <ring-chart class="h-1/2 w-full"></ring-chart> -->
+        </div> -->
+        <ring-chart class="bg-white h-[32rem] w-full" :data="stats"></ring-chart>
         <div class="p-2 pb-16 xl:px-64 grid grid-cols-1 md:grid-cols-3">
             <div class="" v-for="project in projects">
                 <card :name="project.名稱" :status="project.狀態" :p-description="project.進度"></card>
@@ -66,7 +65,8 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    projects: []
+                    projects: [],
+                    stats: []
                 }
             },
             methods: {
@@ -105,6 +105,41 @@
 								this.projects.push(obj)
 							}
                         } )
+                },
+                fetchStat() {
+                    const id = '18i4ERupX1FHffrYmYlmYxOpiNGEkE0vCmtGcEtWyPPw';
+                    const gid = '747570329';
+                    const url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+                    fetch(url)
+                        .then( res => {
+                            if(!res.ok) throw new Error('Cannot fetch data!');
+                            return res.text();
+                        })
+                        .then( rawData => {
+                            let data = JSON.parse(rawData.match(new RegExp('(?:^|\\,)"table":(.*?)(?:}\\);|$)'))[1]);
+                            let table = []
+                            let row = []
+                            data.cols.forEach(colonne => row.push(colonne.label))
+                            table.push(row)
+                            data.rows.forEach(r => {
+                                let row = []
+                                r.c.forEach(cel => {
+                                    try{var value = cel.f ? cel.f : cel.v}
+                                    catch(e){var value = ''}
+                                    row.push(value)
+                                }
+                                )
+                                table.push(row)
+                                }
+                            )
+			                // create a Object using the first row as key
+                            for (let i = 1; i < table.length; i++) {	
+                                let obj = {}
+                                obj[table[0][0]] = table[i][0];
+                                obj[table[0][1]] = parseInt(table[i][1]);
+								this.stats.push(obj)
+							}
+                        } )
                 }
             },
             components: {
@@ -113,6 +148,7 @@
             },
             beforeMount() {
                 this.fetchData();
+                this.fetchStat();
             }
         });
 
